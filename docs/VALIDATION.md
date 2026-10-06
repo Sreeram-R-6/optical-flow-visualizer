@@ -1,5 +1,28 @@
 # Validation evidence
 
+## Hosted browser USB — 2026-10-06
+
+- USB support deployed to https://optical-flow-visualizer.vercel.app, commit b09e825.
+- Browser Web Serial opens the selected device only after Connect USB is clicked.
+  No local server is needed. Browser-selected USB bytes are decoded by pymavlink
+  in `/api/usb/step`; transforms remain in `backend/flow_processor.py`.
+- 39 backend tests and 8 frontend tests pass, plus TypeScript checking and build.
+  Coverage includes MAVLink 1/2 decoding, checksum rejection, large sensor
+  timestamps, legacy flow across stateless requests, origin reset, heartbeat
+  timeout, unrelated vehicle filtering, USB unplug and cancellation, stream-lock
+  cleanup, and blocking outbound commands other than SET_MESSAGE_INTERVAL.
+- Production browser test used a **mock Web Serial device** emitting real
+  pymavlink-encoded frames through the deployed UI and API. It reached CONNECTED /
+  HEARTBEAT OK, displayed Browser USB / 115200, North 1.050 m / East 0.000 m,
+  and showed no simulation banner or application errors.
+- The mock captured exactly six outbound COMMAND_LONG packets, all command 511
+  (SET_MESSAGE_INTERVAL). It observed one picker call and one port open, then one
+  close after heartbeat loss, with explicit reconnect available and no auto reopen.
+- These checks prove the deployed software path with a mock transport. They do
+  not prove a physical browser/device/driver connection, mounting direction or
+  sensor calibration. Serial-port discovery reported no available devices during
+  this run. Physical USB acceptance remains outstanding.
+
 ## Vercel services deployment — 2026-10-06
 
 - Production: https://optical-flow-visualizer.vercel.app.
