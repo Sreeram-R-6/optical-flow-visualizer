@@ -23,6 +23,10 @@ request telemetry rates. The dashboard has no vehicle-control functions.
 
 ## Vercel deployment
 
+Live demo: **https://optical-flow-visualizer.vercel.app**. Click **Start simulation**
+to begin. The Vercel project is connected to this GitHub repository for automatic
+deployments when changes are pushed.
+
 Import this repository as one Vercel project with Root Directory `.`. The root
 `vercel.json` defines two independently built services: `app` (FastAPI, entrypoint
 `backend/cloud.py`) and `frontend` (Vite). `/api/*` routes to `app`; all other

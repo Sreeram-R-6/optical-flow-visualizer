@@ -1,5 +1,27 @@
 # Validation evidence
 
+## Vercel services deployment — 2026-10-06
+
+- Production: https://optical-flow-visualizer.vercel.app.
+- GitHub integration connected to Sreeram-R-6/optical-flow-visualizer.
+- Vercel built the Vite frontend and FastAPI `backend/cloud.py` entrypoint.
+- Public `/api/*` targets `app`; the catch-all targets `frontend`. No internal
+  service calls or bindings are required.
+- 33 backend tests, 4 frontend tests, TypeScript checking and frontend build passed.
+- `vercel dev -L` successfully served both services from a clean temporary checkout.
+  The original workspace has an inaccessible historical `.pytest_cache` directory;
+  the CLI also required a precreated virtual environment to avoid the Windows
+  `python3` Microsoft Store alias. These are local machine issues, not cloud failures.
+- Live unauthenticated `/api/health` returned the hosted-demo mode.
+- Browser verified simulation start, visible changing positions, manual North input
+  (North increased, East stayed zero), origin reset to zero and simulation stop.
+- Live stateless API verified North displacement from 0.16 m to 0.32 m over two
+  steps and an independent empty session remaining disconnected.
+- Hosted simulation uses browser-owned session state and bounded HTTP updates;
+  the cloud entrypoint exposes no serial connection route. USB telemetry remains
+  available through the local launcher.
+- No physical-device checks were performed during this deployment.
+
 Implemented and checked on Windows, 2026-10-06.
 
 ## Passed

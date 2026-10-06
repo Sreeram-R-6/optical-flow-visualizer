@@ -52,6 +52,6 @@ export default function App(){
     <div className="map-controls"><button disabled={busy} onClick={()=>{setPaused(false);void run('reset-origin',{});}} title="Sets the current location to 0,0 without changing anything on the flight controller">Reset origin</button><button onClick={()=>setClearToken(t=>t+1)} title="Clears the displayed path but keeps the current origin">Clear trail</button><button onClick={()=>setPaused(p=>!p)} aria-pressed={paused}>{paused?'Resume visualization':'Pause visualization'}</button><label className="check"><input type="checkbox" checked={prefs.showTrail} onChange={e=>setPrefs({...prefs,showTrail:e.target.checked})}/>Show trail</label><span className="muted">X = East · Y = North</span></div>
     {snapshot?.simulation&&<SimulationControls/>}</section><TelemetryPanel data={snapshot} online={transportLive}/></div>
     <SettingsPanel settings={settings} onSettings={changeSettings} prefs={prefs} onPrefs={setPrefs}/><Diagnostics data={snapshot}/>
-    <footer>Local display only · Flow integration is a debugging estimate, not navigation truth · 25 Hz telemetry / canvas animation</footer>
+    <footer>{snapshot?.mode==='hosted_demo'?'Hosted simulation demo · Up to 5 Hz updates':'Local display only · 25 Hz telemetry'} · Flow integration is a debugging estimate, not navigation truth · Canvas animation</footer>
   </main>;
 }
