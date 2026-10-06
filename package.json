@@ -1,0 +1,1 @@
+{"name":"optical-flow-visualizer-workspace","private":true,"scripts":{"start":"python scripts/run_dev.py","dev":"python scripts/run_dev.py --dev","check":"python -m pytest -q && npm --prefix frontend run typecheck && npm --prefix frontend test && npm --prefix frontend run build"}}

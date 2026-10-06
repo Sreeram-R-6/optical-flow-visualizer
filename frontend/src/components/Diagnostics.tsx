@@ -1,0 +1,6 @@
+import type {Telemetry} from '../types/telemetry';
+import {value} from './TelemetryPanel';
+export function Diagnostics({data}:{data:Telemetry|null}){
+  return <div className="diagnostics"><details className="panel"><summary>MAVLink debug</summary><table><thead><tr><th>Message</th><th>Rate</th><th>Age</th><th>Last received</th></tr></thead><tbody>{Object.entries(data?.debug||{}).map(([name,d])=><tr key={name}><td>{name}</td><td>{value(d.rate_hz,1,' Hz')}</td><td>{value(d.age_ms,0,' ms')}</td><td>{d.last_timestamp?new Date(d.last_timestamp*1000).toLocaleTimeString():'NO DATA'}</td></tr>)}</tbody></table><p>Rejected/invalid samples: {data?.invalid_packets||0}</p><details><summary>Last raw flow packet</summary><pre>{JSON.stringify(data?.flow||{},null,2)}</pre><h3>OPTICAL_FLOW · Mission Planner values</h3><pre>{JSON.stringify(data?.legacy_flow||{},null,2)}</pre></details></details>
+    <details className="panel" open><summary>Event log <span className="muted">last 100 events</span></summary><div className="event-log">{data?.events.slice().reverse().map((e,i)=><div key={`${e.timestamp}-${i}`}><time>{new Date(e.timestamp*1000).toLocaleTimeString()}</time><span className={e.level==='ERROR'?'error':''}>{e.message}</span></div>)||<p>Waiting for backend…</p>}</div></details></div>;
+}
