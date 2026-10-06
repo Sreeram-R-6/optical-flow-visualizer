@@ -1,12 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
-import ts from 'typescript';
-
-const compile=path=>ts.transpileModule(readFileSync(new URL(path,import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
-const url=text=>`data:text/javascript;base64,${Buffer.from(text).toString('base64')}`;
-const types=url(compile('../src/types/telemetry.ts'));
-const transport=compile('../src/services/websocket.ts').replace("'../types/telemetry'",JSON.stringify(types));
+import {compiledUrl} from './compile.mjs';
+const transport=compiledUrl(new URL('../src/services/websocket.ts',import.meta.url));
 
 test('hosted transport accepts updates during manual input and stops polling on cleanup',async()=>{
   const originalFetch=globalThis.fetch;
@@ -17,7 +12,7 @@ test('hosted transport accepts updates during manual input and stops polling on 
     request=JSON.parse(options.body);
     return new Promise(resolve=>{finish=()=>resolve({ok:true,json:async()=>({session:request.session,telemetry:{position:{},settings:request.session.settings}})});});
   };
-  const {api,openTelemetry}=await import(url(transport));
+  const {api,openTelemetry}=await import(transport);
   let close;
   try{
     await api('simulation/start',{});

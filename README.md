@@ -23,8 +23,9 @@ request telemetry rates. The dashboard has no vehicle-control functions.
 
 ## Vercel deployment
 
-Live demo: **https://optical-flow-visualizer.vercel.app**. Click **Start simulation**
-to begin. The Vercel project is connected to this GitHub repository for automatic
+Live site: **https://optical-flow-visualizer.vercel.app**. Connect your flight
+controller with **Connect USB**, or click **Start simulation** without hardware.
+The Vercel project is connected to this GitHub repository for automatic
 deployments when changes are pushed.
 
 Import this repository as one Vercel project with Root Directory `.`. The root
@@ -33,13 +34,38 @@ Import this repository as one Vercel project with Root Directory `.`. The root
 paths route to `frontend`. Neither service calls the other server-side, so no
 internal bindings or manually configured binding variables are needed.
 
-The hosted version is a simulation demo. Click **Start simulation** to see
-movement; manual directions, axis corrections, origin reset and map controls work.
-Each browser owns its session and submits it to a stateless API, so sessions stay
-isolated across visitors and function instances. Closing/reloading resets the demo.
-HTTP updates run at up to 5 Hz; Canvas animation remains independent. No database,
-WebSocket server, serial worker, or environment variables are required for the demo.
-USB/COM telemetry requires the local launcher described below.
+### USB directly from the hosted site
+
+1. Open the site in desktop **Chrome or Edge** over HTTPS.
+2. Connect the flight controller with a data-capable USB cable.
+3. Close Mission Planner, MAVProxy and other applications using its serial port.
+4. Select the baud rate (default 115200), click **Connect USB**, and select your
+   flight controller in the browser's device picker.
+5. Wait for **HEARTBEAT OK**, then confirm real flow and measured range readings.
+6. Use Reset origin and the map controls. Click Disconnect when finished.
+
+Web Serial reads the selected device on your own computer; no local server or
+Python installation is needed for this mode. MAVLink telemetry packets are sent
+over HTTPS to `/api/usb/step` for checksum validation and the existing Python
+sensor transforms. Browser-owned state keeps visitors isolated across Vercel
+instances. Only telemetry interval requests (`MAV_CMD_SET_MESSAGE_INTERVAL`) can
+be written to USB. The browser also checks this command allowlist before writing.
+The server never opens a serial port and never controls the vehicle.
+
+The site does not automatically restore USB permission or reopen a port after
+refresh, unplugging, heartbeat loss, or backend failure. Connect again explicitly.
+Firefox, Safari and browsers without Web Serial can use simulation or the local
+launcher. The device must expose a serial/MAVLink endpoint, not a bootloader.
+
+### Hosted simulation
+
+Click **Start simulation** to see generated movement; manual directions, axis
+corrections, origin reset and map controls work. USB must be disconnected first.
+Each browser owns its session and submits it to a stateless API. Closing/reloading
+resets the session. HTTP display updates run at up to 5 Hz; all received USB
+samples retain their receive times and are processed individually. Canvas
+animation remains independent. No database, WebSocket server, server serial
+worker, or manually configured environment variables are required.
 
 To test services routing locally with a current Vercel CLI, run `vercel dev -L`
 from the repository root. To publish, run `vercel` for preview and `vercel --prod`

@@ -1,12 +1,14 @@
-"""Stateless hosted demo. No serial imports, background workers or shared sessions."""
+"""Hosted browser USB processing and demo. No server serial ports or shared sessions."""
 import math
 from fastapi import FastAPI, Response
 from pydantic import BaseModel, ConfigDict, Field
 from backend.models import Settings, SimulationInput
 from backend.flow_processor import simulated_packets
 from backend.telemetry import TelemetryState
+from backend.cloud_usb import router as usb_router
 
-app = FastAPI(title="Optical Flow Hosted Demo")
+app = FastAPI(title="Optical Flow Browser USB and Demo")
+app.include_router(usb_router)
 
 
 class DemoSession(BaseModel):
@@ -29,7 +31,7 @@ class DemoStep(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"ok": True, "read_only": True, "mode": "hosted_demo"}
+    return {"ok": True, "read_only": True, "mode": "hosted_demo", "browser_usb": True}
 
 
 @app.get("/api/ports")

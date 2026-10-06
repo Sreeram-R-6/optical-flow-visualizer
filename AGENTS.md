@@ -1,6 +1,6 @@
 # Project conventions
 
-This is a localhost read-only telemetry visualizer. Never add vehicle-control commands.
+This is a read-only telemetry visualizer with a local backend and hosted browser USB support. Never add vehicle-control commands.
 The only outbound MAVLink command allowed is MAV_CMD_SET_MESSAGE_INTERVAL.
 All sensor transforms belong in backend/flow_processor.py. NED X is North;
 NED Y is East. Browser map X is East and screen Y decreases with North.
