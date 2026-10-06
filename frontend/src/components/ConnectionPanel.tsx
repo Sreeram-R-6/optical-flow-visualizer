@@ -9,6 +9,7 @@ export function ConnectionPanel({data,run,busy}:{data:Telemetry|null;run:(path:s
   const refresh=async()=>{try{setPorts(await api('ports'));setError('');}catch(e){setError(String(e));}};
   useEffect(()=>{void refresh();},[]);
   const active=!!data && ['CONNECTING','WAITING_FOR_HEARTBEAT','CONNECTED'].includes(data.state);
+  if(data?.mode==='hosted_demo')return <div className="connection"><span>Hosted demo · For USB telemetry, run start.bat on your computer.</span><button disabled={busy||active} onClick={()=>void run('simulation/start',{})}>Start simulation</button><button disabled={busy||!active} onClick={()=>void run('disconnect',{})}>Stop simulation</button></div>;
   return <div className="connection"><label>COM port<select value={port} disabled={active||busy} onChange={e=>setPort(e.target.value)}><option value="">Select port</option>{ports.map(p=><option key={p.device} value={p.device}>{p.device} · {p.description}</option>)}</select></label>
     <label>Baud rate<select value={baud} disabled={active||busy} onChange={e=>{setBaud(+e.target.value);localStorage.setItem('of-baud',e.target.value);}}>{[57600,115200,230400,460800,921600].map(b=><option key={b}>{b}</option>)}</select></label>
     <button disabled={busy} onClick={()=>void refresh()} title="Discover currently available Windows COM ports">Refresh ports</button>

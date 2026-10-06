@@ -34,6 +34,28 @@ def ned_position(north: float, east: float, origin: tuple[float, float]) -> dict
     n, e = north - origin[0], east - origin[1]
     return {"north": n, "east": e, "x": e, "y": n, "distance": math.hypot(n, e)}
 
+
+def simulated_packets(t: float, dt: float, north: float, east: float, vn: float, ve: float):
+    """Generate sensor-axis samples from world motion for the stateless demo."""
+    yaw = math.atan2(ve, vn) if vn or ve else 0.0
+    distance = 1.5 + 0.08 * math.sin(t)
+    forward = vn * math.cos(yaw) + ve * math.sin(yaw)
+    right = -vn * math.sin(yaw) + ve * math.cos(yaw)
+    return [
+        ("HEARTBEAT", {"autopilot": 3, "type": 2}),
+        ("ATTITUDE", {"roll": 0.02 * math.sin(t), "pitch": 0.015 * math.cos(t), "yaw": yaw}),
+        ("DISTANCE_SENSOR", {"current_distance": round(distance * 100), "min_distance": 10,
+                             "max_distance": 1000, "orientation": 25}),
+        ("LOCAL_POSITION_NED", {"x": north, "y": east, "z": -distance, "vx": vn, "vy": ve}),
+        ("OPTICAL_FLOW_RAD", {"time_usec": round(t * 1e6), "sensor_id": 0,
+            "integration_time_us": dt * 1e6, "integrated_x": -right * dt / distance,
+            "integrated_y": forward * dt / distance, "integrated_xgyro": 0, "integrated_ygyro": 0,
+            "quality": 225, "distance": distance, "time_delta_distance_us": 0}),
+        ("OPTICAL_FLOW", {"time_usec": round(t * 1e6), "sensor_id": 0,
+            "flow_comp_m_x": -right / distance, "flow_comp_m_y": forward / distance,
+            "quality": 225, "ground_distance": distance}),
+    ]
+
 class FlowProcessor:
     def __init__(self) -> None:
         self.reset()

@@ -21,7 +21,27 @@ tabs can view the same connection. Refreshing a browser never opens a serial por
 The only outbound MAVLink command is `MAV_CMD_SET_MESSAGE_INTERVAL`, used to
 request telemetry rates. The dashboard has no vehicle-control functions.
 
-## Requirements
+## Vercel deployment
+
+Import this repository as one Vercel project with Root Directory `.`. The root
+`vercel.json` defines two independently built services: `app` (FastAPI, entrypoint
+`backend/cloud.py`) and `frontend` (Vite). `/api/*` routes to `app`; all other
+paths route to `frontend`. Neither service calls the other server-side, so no
+internal bindings or manually configured binding variables are needed.
+
+The hosted version is a simulation demo. Click **Start simulation** to see
+movement; manual directions, axis corrections, origin reset and map controls work.
+Each browser owns its session and submits it to a stateless API, so sessions stay
+isolated across visitors and function instances. Closing/reloading resets the demo.
+HTTP updates run at up to 5 Hz; Canvas animation remains independent. No database,
+WebSocket server, serial worker, or environment variables are required for the demo.
+USB/COM telemetry requires the local launcher described below.
+
+To test services routing locally with a current Vercel CLI, run `vercel dev -L`
+from the repository root. To publish, run `vercel` for preview and `vercel --prod`
+for production, or connect the GitHub repository in the Vercel dashboard.
+
+## Local requirements
 
 - Windows 10/11, Python 3.11 or newer (tested here with 3.14).
 - Node.js 22 LTS (22.12+) or newer for frontend installation/build.

@@ -7,6 +7,7 @@ export interface Settings {
 export const defaultSettings: Settings = {source:'optical_flow',flow_input:'mission_planner',swap_xy:false,invert_x:false,invert_y:false,rotation:0,smoothing:'LOW',deadband:false,deadband_rad:0.0002,yaw_compensation:true,gyro_compensation:true};
 export type ConnectionState = 'DISCONNECTED'|'CONNECTING'|'WAITING_FOR_HEARTBEAT'|'CONNECTED'|'CONNECTION_LOST'|'ERROR';
 export interface Telemetry {
+  mode?: 'hosted_demo';
   timestamp:number; state:ConnectionState; connected:boolean; heartbeat:boolean; heartbeat_age_ms:number|null;
   simulation:boolean; port:string|null; baud:number; error:string|null; system_id:number|null; revision:number;
   position:{source:Settings['source'];available:boolean;reason:string|null;x:number|null;y:number|null;north:number|null;east:number|null;distance:number|null};
